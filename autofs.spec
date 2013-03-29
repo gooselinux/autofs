@@ -4,7 +4,7 @@
 Summary: A tool for automatically mounting and unmounting filesystems
 Name: autofs
 Version: 5.0.5
-Release: 23%{?dist}
+Release: 23%{?dist}.1
 Epoch: 1
 License: GPLv2+
 Group: System Environment/Daemons
@@ -43,6 +43,7 @@ Patch30: autofs-5.0.5-dont-check-null-cache-on-expire.patch
 Patch31: autofs-5.0.5-fix-null-cache-race.patch
 Patch32: autofs-5.0.5-fix-cache_init-on-source-re-read.patch
 Patch33: autofs-5.0.5-fix-negative-cache-included-map-lookup.patch
+Patch34: autofs-5.0.5-fix-remount-locking.patch
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: autoconf, hesiod-devel, openldap-devel, bison, flex, libxml2-devel, cyrus-sasl-devel, openssl-devel module-init-tools util-linux nfs-utils e2fsprogs libtirpc-devel
 Conflicts: cyrus-sasl-lib < 2.1.23-7
@@ -118,6 +119,7 @@ echo %{version}-%{release} > .version
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
 
 %build
 #CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr --libdir=%{_libdir}
@@ -170,6 +172,12 @@ fi
 %{_libdir}/autofs/
 
 %changelog
+* Tue Mar 22 2011 Ian Kent <ikent@redhat.com> - 5.0.5-23.el6_0.1
+- bz689754 - automount hangs on startup when started with an already
+  mounted cifs share
+  - fix remount locking
+- Resolves: rhbz#689754
+
 * Thu Jul 1 2010 Ian Kent <ikent@redhat.com> - 5.0.5-23
 - bz597944 - autofs5: segfault in close_mount()
   - add mutex to serialize access to mount module handle in parse module.
